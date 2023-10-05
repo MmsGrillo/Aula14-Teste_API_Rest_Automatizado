@@ -47,7 +47,46 @@ Cypress.Commands.add('token', (email, senha) => {
             "preco": preco,
             "descricao": descricao,
             "quantidade": quantidade
-          }, 
-          failOnStatusCode: false
+        }
+    })    
+})
+
+Cypress.Commands.add('cadastrarUsuario', (nome, email, password, admin)=>{ 
+    cy.request({
+        method: "POST",
+        url: "usuarios",
+        body:{
+            "nome": nome,
+            "email": email,
+            "password": password,
+            "administrador": admin
+        },
+        failOnStatusCode: false
     })
- })
+})
+
+Cypress.Commands.add('editarUsuario', (nome, email, senha, admin)=>{
+    cy.request('usuarios').then(response=>{
+        let id = response.body.usuarios[1]._id
+        cy.request({
+            method: "PUT",
+            url: `usuarios/${id}`,
+            body: {
+                nome: nome,
+                email: email,
+                password: senha,
+                administrador: admin
+            }
+        })  
+    })
+})
+
+Cypress.Commands.add('excluirUsuario', ()=>{
+    cy.request('usuarios').then(response=>{
+        let id = response.body.usuarios[1]._id
+        cy.request({
+            method: "DELETE",
+            url: `usuarios/${id}`
+        })  
+    })
+})
